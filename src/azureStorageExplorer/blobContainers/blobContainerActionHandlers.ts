@@ -18,17 +18,17 @@ export function registerBlobContainerActionHandlers(actionHandler: AzureActionHa
     context.subscriptions.push(_editor);
 
     actionHandler.registerCommand("azureStorage.openBlobContainer", openBlobContainerInStorageExplorer);
-    actionHandler.registerCommand("azureStorage.editBlob", (node: IAzureParentNode<BlobNode>) => _editor.showEditor(node));
+    actionHandler.registerCommand("azureStorage.editBlob", async (node: IAzureParentNode<BlobNode>) => _editor.showEditor(node));
     actionHandler.registerCommand("azureStorage.deleteBlobContainer", (node: IAzureParentNode<BlobContainerNode>) => node.deleteNode());
     actionHandler.registerCommand("azureStorage.createBlockTextBlob", (node: IAzureParentNode<BlobContainerNode>) => node.createChild());
     actionHandler.registerEvent('azureStorage.blobEditor.onDidSaveTextDocument', vscode.workspace.onDidSaveTextDocument, (trackTelemetry: () => void, doc: vscode.TextDocument) => _editor.onDidSaveTextDocument(trackTelemetry, doc));
 }
 
-function openBlobContainerInStorageExplorer(node: IAzureNode<BlobContainerNode>): void {
+function openBlobContainerInStorageExplorer(node: IAzureNode<BlobContainerNode>): Promise<void> {
     var resourceId = node.treeItem.storageAccount.id;
     var subscriptionid = node.subscription.subscriptionId;
     var resourceType = "Azure.BlobContainer";
     var resourceName = node.treeItem.container.name;
 
-    storageExplorerLauncher.openResource(resourceId, subscriptionid, resourceType, resourceName);
+    return storageExplorerLauncher.openResource(resourceId, subscriptionid, resourceType, resourceName);
 }
